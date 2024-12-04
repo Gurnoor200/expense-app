@@ -22,7 +22,7 @@ class LoginPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 50),
+              const SizedBox(height: 40),
 
               // logo
               const Icon(
@@ -30,7 +30,7 @@ class LoginPage extends StatelessWidget {
                 size: 100,
               ),
 
-              const SizedBox(height: 50),
+              const SizedBox(height: 40),
 
               // welcome back, you've been missed!
               Text(
@@ -41,7 +41,7 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 25),
+              const SizedBox(height: 20),
 
               // username textfield
               MyTextField(
@@ -118,13 +118,18 @@ class LoginPage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
+                  // facebook button
+                  SquareTile(imagePath: 'lib/images/facebook.png'),
+
+                  SizedBox(width: 25),
+
                   // google button
                   SquareTile(imagePath: 'lib/images/google.png'),
 
                   SizedBox(width: 25),
 
-                  // apple button
-                  SquareTile(imagePath: 'lib/images/apple.png')
+                  // Twitter(X) button
+                  SquareTile(imagePath: 'lib/images/x.png')
                 ],
               ),
 
