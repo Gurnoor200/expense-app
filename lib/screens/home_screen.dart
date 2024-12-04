@@ -1,4 +1,3 @@
-import 'package:expense_app/maind.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -10,7 +9,7 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Navigate to Add Expense Screen
-          Navigator.of(context).pushNamed(AddExpenseScreen.routeName);
+          Navigator.of(context).pushNamed("");
         },
         child: Icon(Icons.add),
       ),

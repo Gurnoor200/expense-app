@@ -1,7 +1,10 @@
+// ignore_for_file: unused_local_variable, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:expense_app/components/my_button.dart';
 import 'package:expense_app/components/my_textfield.dart';
 import 'package:expense_app/components/square_tile.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
@@ -10,8 +13,49 @@ class LoginPage extends StatelessWidget {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
+  // FirebaseAuth instance
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   // sign user in method
-  void signUserIn() {}
+  // sign user in method
+  void signUserIn(BuildContext context) async {
+    try {
+      // Attempt to sign in using email and password
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: usernameController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      // If successful, navigate to the home page
+      Navigator.pushReplacementNamed(context, '/home');
+    } catch (e) {
+      // Handle any errors during sign-in
+      String errorMessage = 'Something went wrong. Please try again later.';
+      if (e is FirebaseAuthException) {
+        if (e.code == 'user-not-found') {
+          errorMessage = 'No user found for that email.';
+        } else if (e.code == 'wrong-password') {
+          errorMessage = 'Incorrect password provided.';
+        }
+      }
+      // Show error message
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Sign-In Failed'),
+          content: Text(errorMessage),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +82,7 @@ class LoginPage extends StatelessWidget {
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
 
@@ -69,7 +114,10 @@ class LoginPage extends StatelessWidget {
                   children: [
                     Text(
                       'Forgot Password?',
-                      style: TextStyle(color: Colors.red),
+                      style: TextStyle(
+                        color: Colors.red[900],
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
                   ],
                 ),
@@ -79,7 +127,7 @@ class LoginPage extends StatelessWidget {
 
               // sign in button
               MyButton(
-                onTap: signUserIn,
+                onTap: () => signUserIn(context),
               ),
 
               const SizedBox(height: 50),
