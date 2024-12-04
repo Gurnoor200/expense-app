@@ -2,6 +2,20 @@ import 'package:expense_app/firebase/firebase_service.dart';
 import 'package:flutter/material.dart';
 
 class AddExpenseScreen extends StatefulWidget {
+  final String? expenseId;
+  final String? title;
+  final String? amount;
+  final String? category;
+  final String? date;
+
+  AddExpenseScreen({
+    this.expenseId,
+    this.title,
+    this.amount,
+    this.category,
+    this.date,
+  });
+
   @override
   _AddExpenseScreenState createState() => _AddExpenseScreenState();
 }
@@ -41,24 +55,46 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       });
   }
 
-  // Function to add expense
-  void _addExpense() {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.expenseId != null) {
+      // Populate the fields with existing data if editing
+      _titleController.text = widget.title ?? '';
+      _amountController.text = widget.amount ?? '';
+      _categoryController.text = widget.category ?? '';
+      _dateController.text = widget.date ?? '';
+      selectedCategory = widget.category;
+    }
+  }
+
+  // Function to add or update expense
+  void _saveExpense() {
     final title = _titleController.text;
     final amount = double.parse(_amountController.text);
     final category = selectedCategory ??
         'Other'; // Default to 'Other' if no category selected
     final date = _dateController.text;
 
-    // Add expense using Firebase
-    _firebaseService.addExpense(title, amount, category, date).then((_) {
-      Navigator.pop(context); // Go back to the previous screen
-    });
+    if (widget.expenseId == null) {
+      // Add new expense
+      _firebaseService.addExpense(title, amount, category, date).then((_) {
+        Navigator.pop(context); // Go back to the previous screen
+      });
+    } else {
+      // Update existing expense
+      _firebaseService
+          .updateExpense(widget.expenseId!, title, amount, category, date)
+          .then((_) {
+        Navigator.pop(context); // Go back to the previous screen
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Expense')),
+      appBar: AppBar(title: const Text('Add/Update Expense')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -104,10 +140,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               readOnly: true, // Prevent typing in the date field
             ),
             SizedBox(height: 20),
-            // Add Expense Button
+            // Save Expense Button
             ElevatedButton(
-              onPressed: _addExpense,
-              child: const Text('Add Expense'),
+              onPressed: _saveExpense,
+              child: const Text('Save Expense'),
             ),
           ],
         ),

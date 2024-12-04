@@ -2,53 +2,47 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirebaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final String collection = 'expenses';
 
-  // Create or add new expense
-  Future<void> addExpense(
-      String title, double amount, String category, String date) async {
-    try {
-      await _firestore.collection(collection).add({
-        'title': title,
-        'amount': amount,
-        'category': category,
-        'date': date,
-      });
-    } catch (e) {
-      print("Error adding expense: $e");
-    }
-  }
-
-  // Read all expenses
+  // Fetch expenses from Firebase
   Stream<List<Map<String, dynamic>>> getExpenses() {
-    return _firestore.collection(collection).snapshots().map((snapshot) {
+    return _firestore.collection('expenses').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        return doc.data() as Map<String, dynamic>;
+        final data = doc.data();
+        return {
+          'id': doc.id,
+          'title': data['title'] ?? 'No Title',
+          'amount': data['amount'] ?? 0.0,
+          'category': data['category'] ?? 'No Category',
+          'date': data['date'] ?? 'No Date',
+        };
       }).toList();
     });
   }
 
-  // Update an expense
-  Future<void> updateExpense(String id, String title, double amount,
-      String category, String date) async {
-    try {
-      await _firestore.collection(collection).doc(id).update({
-        'title': title,
-        'amount': amount,
-        'category': category,
-        'date': date,
-      });
-    } catch (e) {
-      print("Error updating expense: $e");
-    }
+  // Add an expense to Firebase
+  Future<void> addExpense(
+      String title, double amount, String category, String date) {
+    return _firestore.collection('expenses').add({
+      'title': title,
+      'amount': amount,
+      'category': category,
+      'date': date,
+    });
   }
 
-  // Delete an expense
-  Future<void> deleteExpense(String id) async {
-    try {
-      await _firestore.collection(collection).doc(id).delete();
-    } catch (e) {
-      print("Error deleting expense: $e");
-    }
+  // Update an existing expense in Firebase
+  Future<void> updateExpense(
+      String id, String title, double amount, String category, String date) {
+    return _firestore.collection('expenses').doc(id).update({
+      'title': title,
+      'amount': amount,
+      'category': category,
+      'date': date,
+    });
+  }
+
+  // Delete an expense from Firebase
+  Future<void> deleteExpense(String id) {
+    return _firestore.collection('expenses').doc(id).delete();
   }
 }

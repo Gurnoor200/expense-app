@@ -12,6 +12,7 @@ class HomeScreen extends StatelessWidget {
         title: const Text('Expense Manager'),
       ),
       body: StreamBuilder<List<Map<String, dynamic>>>(
+        // Listening to the stream of expenses
         stream: _firebaseService.getExpenses(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -42,15 +43,35 @@ class HomeScreen extends StatelessWidget {
                     itemCount: expenses?.length ?? 0,
                     itemBuilder: (context, index) {
                       final expense = expenses![index];
+
+                      // Safely accessing fields and providing fallback for null values
+                      final title = expense['title'] ?? 'No Title';
+                      final category = expense['category'] ?? 'No Category';
+                      final amount = expense['amount']?.toString() ?? '0.00';
+                      final date = expense['date'] ?? 'No Date';
+
                       return Card(
                         margin: const EdgeInsets.symmetric(vertical: 8.0),
                         child: ListTile(
-                          title: Text(expense['title']),
-                          subtitle: Text(
-                              '${expense['category']} - \$${expense['amount']}'),
-                          trailing: Text(expense['date']),
+                          title: Text(title),
+                          subtitle: Text('$category - \$${amount}'),
+                          trailing: Text(date),
+                          onTap: () {
+                            // Navigate to the AddExpenseScreen with pre-filled data for update
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => AddExpenseScreen(
+                                  expenseId: expense['id'],
+                                  title: title,
+                                  amount: amount,
+                                  category: category,
+                                  date: date,
+                                ),
+                              ),
+                            );
+                          },
                           onLongPress: () {
-                            // Use the 'id' field to delete the expense
+                            // Delete the expense on long press
                             _firebaseService.deleteExpense(expense['id']);
                           },
                         ),
@@ -66,7 +87,10 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => AddExpenseScreen()));
+            MaterialPageRoute(
+              builder: (context) => AddExpenseScreen(),
+            ),
+          );
         },
         child: const Icon(Icons.add),
       ),
