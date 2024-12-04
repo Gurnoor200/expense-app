@@ -91,7 +91,7 @@ class LoginPage extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Divider(
-                        thickness: 0.5,
+                        thickness: 1,
                         color: Colors.grey[400],
                       ),
                     ),
@@ -133,7 +133,7 @@ class LoginPage extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 50),
+              const SizedBox(height: 30),
 
               // not a member? register now
               Row(
@@ -145,10 +145,10 @@ class LoginPage extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   const Text(
-                    'Register now',
+                    'Join Now',
                     style: TextStyle(
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
                 ],
